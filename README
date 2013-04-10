@@ -1,0 +1,6 @@
+See fritz.py in this dir for an usage example. 
+
+Track data with rrd:
+rrdtool create fritz.rrd -s 300 DS:power:GAUGE:900:0:150 RRA:AVERAGE:0.5:12:3600 RRA:AVERAGE:0.5:288:3600 RRA:AVERAGE:0.5:1:3600
+rrdtool fetch fritz.rrd AVERAGE
+rrdtool graph fritz.png DEF:power=fritz.rrd:power:AVERAGE 'LINE1:power#ff0000:Watt'
