@@ -1,4 +1,7 @@
 See fritz.py in this dir for an usage example. 
+Otherwise start with:
+>>> import fritzbox
+>>> help(fritzbox)
 
 Track data with rrd:
 rrdtool create fritz.rrd -s 300 DS:power:GAUGE:900:0:150 RRA:AVERAGE:0.5:12:3600 RRA:AVERAGE:0.5:288:3600 RRA:AVERAGE:0.5:1:3600
