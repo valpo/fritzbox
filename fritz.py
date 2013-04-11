@@ -5,7 +5,7 @@ def updateRrrd(powerconsumption):
   try: 
     import rrdtool
     if not os.path.exists("fritz.rrd"):
-      rrdtool.create("fritz.rrd", "--step", "300", "DS:power:GAUGE:900:0:150", 'RRA:AVERAGE:0.5:12:3600' 'RRA:AVERAGE:0.5:288:3600' 'RRA:AVERAGE:0.5:1:3600')
+      rrdtool.create("fritz.rrd", "--step", "300", "DS:power:GAUGE:900:0:150", 'RRA:AVERAGE:0.5:12:3600', 'RRA:AVERAGE:0.5:288:3600', 'RRA:AVERAGE:0.5:1:3600')
     rrdtool.update("fritz.rrd", "N:%f" % powerconsumption)
   except: raise
 
