@@ -27,10 +27,12 @@ def getDevices():
     res.append(device)
   return res
 
-def getConsumption(deviceid, timerange = 10):
+def getConsumption(deviceid, timerange = "10"):
   ''' get the power consumption of this device for the given time range. range may be 10 or '''
+  tranges = ("10","24h","month","year")
+  if timerange not in tranges: raise FritzError("unknown timerange, possible values are: %s" % str(tranges))
   baseurl = fg.url + "/net/home_auto_query.lua"
-  post_data = urllib.urlencode({'sid' : fg.SID, 'command' : 'EnergyStats_%d' % timerange, 'id' : deviceid, 'xhr' : 0 })
+  post_data = urllib.urlencode({'sid' : fg.SID, 'command' : 'EnergyStats_%s' % timerange, 'id' : deviceid, 'xhr' : 0 })
   req = urllib2.urlopen(baseurl + '?' + post_data)
   data = req.read()
   if fg.DEBUG:
