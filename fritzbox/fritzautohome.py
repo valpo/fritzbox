@@ -28,7 +28,7 @@ def getDevices():
   return res
 
 def getConsumption(deviceid, timerange = "10"):
-  ''' get the power consumption of this device for the given time range. range may be 10 or '''
+  ''' get the average power consumption of this device for the given time range. range may be 10, 24h, month or year'''
   tranges = ("10","24h","month","year")
   if timerange not in tranges: raise FritzError("unknown timerange, possible values are: %s" % str(tranges))
   baseurl = fg.url + "/net/home_auto_query.lua"
@@ -43,6 +43,21 @@ def getConsumption(deviceid, timerange = "10"):
   average = float(data["EnStats_average_value"])/100.0
   if fg.DEBUG: print "average:", average
   return average
+
+def getLastConsumption(deviceid):
+  ''' get the last known (latest) power consumption of this device '''
+  baseurl = fg.url + "/net/home_auto_query.lua"
+  post_data = urllib.urlencode({'sid' : fg.SID, 'command' : 'EnergyStats_10', 'id' : deviceid, 'xhr' : 0 })
+  req = urllib2.urlopen(baseurl + '?' + post_data)
+  data = req.read()
+  if fg.DEBUG:
+    print "data from power consumption:"
+    print req.info()
+    print data
+  data = json.loads(data)
+  latest = float(data["EnStats_watt_value_1"])/100.0
+  if fg.DEBUG: print "latest:", latest
+  return latest
 
 if __name__ == "__main__":
   sid = fritzlogin.getSessionID('http://fritz.box','','')
