@@ -18,6 +18,14 @@ def main():
   devid = device[0] # id is always the first value
   powerconsumption = fb.getConsumption(devid)
   print "current consumption:",powerconsumption
+  state = fb.getPowerState(devid)
+  print "current state:",state
+  fb.powerOff(devid)
+  state = fb.getPowerState(devid)
+  print "current state:",state
+  fb.powerOn(devid)
+  state = fb.getPowerState(devid)
+  print "current state:",state
 
   updateRrrd(powerconsumption)
   

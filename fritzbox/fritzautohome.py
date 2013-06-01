@@ -59,30 +59,43 @@ def getLastConsumption(deviceid):
   if fg.DEBUG: print "latest:", latest
   return latest
 
-if __name__ == "__main__":
-  sid = fritzlogin.getSessionID('http://fritz.box','','')
-  uri = "http://fritz.box/net/home_auto_query.lua"
-  post_data = urllib.urlencode({'sid' : sid, 'command' : 'AllOutletStates', 'xhr' : 0 })
-  print "req uri:",uri, post_data
-  req = urllib2.urlopen(uri + '?' + post_data)
+def getPowerState(deviceid):
+  ''' returns either 0 (power off) or 1 (power on) '''
+  baseurl = fg.url + "/net/home_auto_query.lua"
+  post_data = urllib.urlencode({'sid' : fg.SID, 'command' : 'AllOutletStates', 'id' : deviceid, 'xhr' : 1 })
+  req = urllib2.urlopen(baseurl + '?' + post_data)
   data = req.read()
-  print "data from autohome:"
-  print req.info()
-  print data
-  #xml = parseString(data)
-  #sid = xml.getElementsByTagName("SID").item(0).firstChild.data
-
-  post_data = urllib.urlencode({'sid' : sid, 'command' : 'EnergyStats_10', 'id' : 16, 'xhr' : 0 })
-  req = urllib2.urlopen(uri + '?' + post_data)
-  data = req.read()
-  print "data from autohome:"
-  print req.info()
-  print data
+  if fg.DEBUG:
+    print "data from powerstates:"
+    print req.info()
+    print data
   data = json.loads(data)
-  average = float(data["EnStats_average_value"])/100.0
-  print "average:", average
+  switchState = int(data["DeviceSwitchState_1"])
+  if fg.DEBUG: print "state:", switchState
+  return switchState
 
-  if not os.path.exists("fritz.rrd"):
-    rrdtool.create("fritz.rrd", "--step", "600", "DS:power:GAUGE:900:0:150", 'RRA:AVERAGE:0.5:1:24',
-                 'RRA:AVERAGE:0.5:6:10')
-  rrdtool.update("fritz.rrd", "N:%f" % average)
+def setPowerState(deviceid, value):
+  baseurl = fg.url + "/net/home_auto_query.lua"
+  post_data = urllib.urlencode({'sid' : fg.SID, 'command' : 'SwitchOnOff', 'id' : deviceid, 'value_to_set' : value, 'xhr' : 1 })
+  req = urllib2.urlopen(baseurl, post_data)
+  data = req.read()
+  if fg.DEBUG:
+    print "data from powerstates:"
+    print req.info()
+    print data
+  data = json.loads(data)
+  res = int(data["RequestResult"])
+  if fg.DEBUG: print "result:", res
+  return res
+
+def powerOn(deviceid):
+  ''' power on the device '''
+  setPowerState(deviceid, 1)
+  
+def powerOff(deviceid):
+  ''' power off the device '''
+  setPowerState(deviceid, 0)
+  
+
+if __name__ == "__main__":
+  pass
