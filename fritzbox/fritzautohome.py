@@ -1,7 +1,6 @@
 import urllib2, urllib, cookielib
 from xml.dom.minidom import parseString
 import json
-import rrdtool
 import os.path
 
 from fritzerror import FritzError
@@ -62,7 +61,7 @@ def getLastConsumption(deviceid):
 def getPowerState(deviceid):
   ''' returns either 0 (power off) or 1 (power on) '''
   baseurl = fg.url + "/net/home_auto_query.lua"
-  post_data = urllib.urlencode({'sid' : fg.SID, 'command' : 'AllOutletStates', 'id' : deviceid, 'xhr' : 1 })
+  post_data = urllib.urlencode({'sid' : fg.SID, 'command' : 'OutletStates', 'id' : deviceid, 'xhr' : 1 })
   req = urllib2.urlopen(baseurl + '?' + post_data)
   data = req.read()
   if fg.DEBUG:
@@ -70,7 +69,7 @@ def getPowerState(deviceid):
     print req.info()
     print data
   data = json.loads(data)
-  switchState = int(data["DeviceSwitchState_1"])
+  switchState = int(data["DeviceSwitchState"])
   if fg.DEBUG: print "state:", switchState
   return switchState
 
