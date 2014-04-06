@@ -5,17 +5,15 @@ Otherwise start with:
 
 I am using the following ~/.fritzboxpyrc: 
 
-<pre>
+----------------------------------------
 [global]
 url: http://fritz.box
 username: 
 password: <password>
-</pre>
+----------------------------------------
 
-which I read on startup by calling 
-<pre>
+which I read on startup by calling:
 fb.readConfig("/home/mathias/.fritzboxpyrc")
-</pre>
 
 Track data with rrd:
 rrdtool create fritz.rrd -s 300 DS:power:GAUGE:900:0:150 RRA:AVERAGE:0.5:12:3600 RRA:AVERAGE:0.5:288:3600 RRA:AVERAGE:0.5:1:3600
