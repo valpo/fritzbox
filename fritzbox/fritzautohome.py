@@ -26,6 +26,27 @@ def getDevices():
     res.append(device)
   return res
 
+def getTemperature(deviceid):
+  ''' get the temperature of this device in celsius '''
+  baseurl = fg.url + "/net/home_auto_query.lua"
+  post_data = urllib.urlencode({'sid' : fg.SID, 'command' : 'AllOutletStates', 'xhr' : 0 })
+  req = urllib2.urlopen(baseurl + '?' + post_data)
+  data = req.read()
+  if fg.DEBUG:
+    print "data from temperature:"
+    print req.info()
+    print data
+  data = json.loads(data)
+  if fg.DEBUG:
+    print data
+  for i in xrange(len(data)): # we cannot have more devices then entries in this list
+    try:
+      if data["DeviceID_%d" % i] == str(deviceid):
+        return float(data["DeviceTemp_%d" % i])/10.0
+    except KeyError: pass
+  if fg.DEBUG: print "no temperature for device",deviceid,"found"
+  return 0
+
 def getConsumption(deviceid, timerange = "10"):
   ''' get the average power consumption of this device for the given time range. range may be 10, 24h, month or year'''
   tranges = ("10","24h","month","year")

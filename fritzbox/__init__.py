@@ -5,4 +5,4 @@
 
 from fritzglobals import readConfig
 from fritzlogin import login, checkSession
-from fritzautohome import getDevices, getConsumption, getLastConsumption, getPowerState, powerOn, powerOff
+from fritzautohome import getDevices, getConsumption, getTemperature, getLastConsumption, getPowerState, powerOn, powerOff
