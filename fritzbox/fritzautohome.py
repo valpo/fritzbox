@@ -1,7 +1,7 @@
 import urllib2, urllib, cookielib
 from xml.dom.minidom import parseString
 import json
-import os.path
+import os.path, re
 
 from fritzerror import FritzError
 import fritzglobals as fg
@@ -11,15 +11,20 @@ def getDevices():
   ''' returns a list of tuples (deviceid, connectstate, switchstate) '''
   baseurl = fg.url
   url = baseurl + "/webservices/homeautoswitch.lua"
-  post_data = urllib.urlencode({'sid' : fg.SID, 'switchcmd' : 'getswitchlist' })
+  post_data = urllib.urlencode({'sid' : fg.SID, 'switchcmd' : 'getdevicelistinfos' })
   req = urllib2.urlopen(url + '?' + post_data)
   data = req.read()
   if fg.DEBUG:
     print "data from autohome:"
     print req.info()
     print data
-  data = data.strip().split(",")
-  return data
+  data = parseString(data)
+  deviceNodes = data.getElementsByTagName("device")
+  devices = []
+  for n in deviceNodes:
+    devId = n.attributes["identifier"].nodeValue
+    devices.append(devId)
+  return devices
 
 def getTemperature(deviceid):
   ''' get the temperature of this device in celsius '''
